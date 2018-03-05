@@ -1,5 +1,5 @@
 {
-	"name" : "indicalabs/yii2-dropzonejs",
+	"name" : "indicalabs/yii2-dropzone",
 	"description" : "Upload images ",
 	"type" : "yii2-extension",
 	"keywords" : [
