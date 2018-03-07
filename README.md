@@ -2,7 +2,7 @@ Yii2 dropzone extension
 =========================
 Upload images 
 
-This is based on https://github.com/twitf/yii2-dropzone.git
+PLease do not use - it is an experiment
 
 Installation
 ------------

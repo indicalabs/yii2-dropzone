@@ -16,6 +16,7 @@
 	],
 	"require" : {
 		"yiisoft/yii2" : "~2.0.14",
+		"npm-asset/vue2-dropzone" : "3.0.6",
 		"npm-asset/dropzone" : "5.4.0",
 		"npm-asset/sortablejs" : "1.7.0"
 	},
