@@ -87,6 +87,10 @@ class DropzoneWidget extends InputWidget
      */
     public function init()
     {
+        //模型存在
+        if ($this->hasModel()){
+            parent::init();
+        }
         $this->initOptions();
         $this->initConainerId();
         $this->initInputName();
@@ -94,10 +98,7 @@ class DropzoneWidget extends InputWidget
         $this->registerAssets();
         $this->initMockFile();
         $this->initSortable();
-        //模型存在
-        if ($this->hasModel()){
-            parent::init();
-        }
+       
     }
     
     /**
@@ -122,9 +123,9 @@ class DropzoneWidget extends InputWidget
         $this->options = [
             'url' => Url::to(['upload']),
             'addRemoveLinks'=>true,
-            'dictCancelUpload'=>'取消上传',
+            'dictCancelUpload'=>'Cancel',
             'parallelUploads'=>255,//并行处理的文件数量 默认无限放大 不做限制
-            'dictRemoveFile'=>'删除文件',
+            'dictRemoveFile'=>'Remove',
             'autoProcessQueue' => true, //自动上传
             'maxFilesize' => get_cfg_var("post_max_size") ? (int)get_cfg_var("post_max_size") : 0,//上传大小限制
         ];
@@ -233,9 +234,9 @@ class DropzoneWidget extends InputWidget
             }
         }
         
-        //是否开启自动上传
+        //Whether to turn on automatic upload
         if ($this->options['autoProcessQueue']===false&&empty($this->upload_button)){
-            $this->upload_button='<button type="submit" class="btn btn-primary pull-right" id="upload_button" style="position:absolute;right:0.5rem;top: 0.5rem;">上传</button>';
+            $this->upload_button='<button type="submit" class="btn btn-primary pull-right" id="upload_button" style="position:absolute;right:0.5rem;top: 0.5rem;">Upload</button>';
             $js.=$this->containerId.'.element.querySelector("button[id=upload_button]").addEventListener("click",function (e) {
                 e.preventDefault();
                 e.stopPropagation();
