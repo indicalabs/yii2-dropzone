@@ -19,7 +19,8 @@
 		"npm-asset/vue2-dropzone" : "3.0.6",
 		"npm-asset/dropzone" : "5.4.0",
 		"npm-asset/sortablejs" : "1.7.0",
-		"npm-asset/vue": "~2.5.13"
+		"npm-asset/vue": "~2.5.13",
+		"bower-asset/axios": "v0.18.0"
 	},
 	"autoload" : {
 		"psr-4" : {
