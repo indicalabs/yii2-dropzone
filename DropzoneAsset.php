@@ -12,7 +12,8 @@ class DropzoneAsset extends AssetBundle
 	public $sourcePath = '@npm/dropzone/dist';
 	
 	public $js = [
-			'dropzone.js',
+			//'dropzone.js',
+			'dropzone-amd-module.js'
 	];
 	
 	public $css = [
@@ -23,7 +24,7 @@ class DropzoneAsset extends AssetBundle
 //			'build/img/flags.png',
 	];
 	public $depends = [
-	    'yii\web\JqueryAsset',
-	    'yii\jui\JuiAsset'
+// 	    'yii\web\JqueryAsset',
+// 	    'yii\jui\JuiAsset'
 	];
 }

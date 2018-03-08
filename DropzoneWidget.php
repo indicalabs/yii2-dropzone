@@ -16,19 +16,16 @@ class DropzoneWidget extends InputWidget
      * @var array
      */
     public $clientOptions = [];
-    
     /**dropzone事件侦听
      * 详情参阅 http://www.dropzonejs.com/#event-list
      * @var array
      */
     public $clientEvents = [];
-    
     /**
      * dropzone默认配置
      * @var array
      */
     public $options = [];
-    
     /**
      * dropzone默认侦听
      * @var array
@@ -39,19 +36,16 @@ class DropzoneWidget extends InputWidget
      * @var bool
      */
     public $autoDiscover = false;
-    
     /**
      * dropzone容器
      * @var string
      */
     public $containerId = 'myDropzone';
-    
     /**
      * dropzone预览容器
      * @var string
      */
     public $previewsId = 'dz-previews';
-    
     /**
      * 回显的图片数组  数组格式['/uploads/xxxxx.jpg','/uploads/xxxxx.jpg']
      * @var array
@@ -62,35 +56,27 @@ class DropzoneWidget extends InputWidget
      * @var bool
      */
     public $sortable = true;
-    
     /**
      * Sortable配置参数
      * 详情参阅 https://github.com/RubaXa/Sortable#options
      * @var array
      */
-    
     public $sortableOption = [];
     /**
      * 自动上传关闭时,上传按钮的html
      * @var string
      */
     public $upload_button='';
-    
     /**
      * input Name名 默认file
      * @var string
      */
     public $inputName='file';
-    
     /**
      * 初始化小部件
      */
     public function init()
     {
-        //模型存在
-        if ($this->hasModel()){
-            parent::init();
-        }
         $this->initOptions();
         $this->initConainerId();
         $this->initInputName();
@@ -98,9 +84,11 @@ class DropzoneWidget extends InputWidget
         $this->registerAssets();
         $this->initMockFile();
         $this->initSortable();
-       
+        //模型存在
+        if ($this->hasModel()){
+            parent::init();
+        }
     }
-    
     /**
      * 初始化inputName
      */
@@ -109,7 +97,6 @@ class DropzoneWidget extends InputWidget
             $this->inputName= Html::getInputName($this->model, $this->attribute);
         }
     }
-    
     /**
      * 初始化容器id
      */
@@ -118,7 +105,6 @@ class DropzoneWidget extends InputWidget
             $this->containerId = 'myDropzone_'.$this->id;
         }
     }
-    
     public function initOptions(){
         $this->options = [
             'url' => Url::to(['upload']),
@@ -126,19 +112,17 @@ class DropzoneWidget extends InputWidget
             'dictCancelUpload'=>'Cancel',
             'parallelUploads'=>255,//并行处理的文件数量 默认无限放大 不做限制
             'dictRemoveFile'=>'Remove',
+            'thumbnailWidth' => 200,
             'autoProcessQueue' => true, //自动上传
             'maxFilesize' => get_cfg_var("post_max_size") ? (int)get_cfg_var("post_max_size") : 0,//上传大小限制
         ];
-        
         //构造请求参数csrf
         if (\Yii::$app->getRequest()->enableCsrfValidation) {
             $this->options['headers'][\yii\web\Request::CSRF_HEADER] = \Yii::$app->getRequest()->getCsrfToken();
             $this->options['params'][\Yii::$app->getRequest()->csrfParam] = \Yii::$app->getRequest()->getCsrfToken();
         }
-        
         $this->options = ArrayHelper::merge($this->options, $this->clientOptions);
     }
-    
     /**
      * 初始化事件侦听
      */
@@ -151,6 +135,8 @@ class DropzoneWidget extends InputWidget
                     input.setAttribute("name", "'.$this->inputName.'[]");
                     input.setAttribute("value", response.savePath);
                     file.previewElement.appendChild(input);
+console.log(input);
+console.log(file);
                 }
             }',
             'queuecomplete'=>'function(file){
@@ -171,11 +157,9 @@ class DropzoneWidget extends InputWidget
                     }
                 );
             }',
-            
         ];
         $this->events = ArrayHelper::merge($this->events, $this->clientEvents);
     }
-    
     /**
      * 初始化排序
      */
@@ -184,7 +168,6 @@ class DropzoneWidget extends InputWidget
             $this->getView()->registerJs('Sortable.create(document.getElementById("' . $this->containerId . '"),' . Json::encode($this->sortableOption) . ');');
         }
     }
-    
     /**
      * 图片回显
      * @param $mockFiles
@@ -210,16 +193,13 @@ class DropzoneWidget extends InputWidget
                 '});');
         }
     }
-    
     public function run()
     {
         if ($this->hasModel()){
             $input= Html::hiddenInput($this->inputName);
         }
-        return Html::tag('div',isset($input)?$input.$this->upload_button:$this->upload_button, ['id' => $this->containerId, 'class' => 'dropzone','style'=>'position: relative']);
-        
+        return Html::tag('div',isset($input)?$input.$this->upload_button:$this->upload_button, ['id' => $this->containerId, 'class' => '','style'=>'position: relative']);
     }
-    
     /**
      * 注册小部件至页面
      */
@@ -227,26 +207,25 @@ class DropzoneWidget extends InputWidget
     {
         $this->autoDiscover=$this->autoDiscover?'true':'false';
         $js = 'Dropzone.autoDiscover = ' . $this->autoDiscover . '; var ' . $this->containerId . ' = new Dropzone("div#' . $this->containerId . '", ' . Json::encode($this->options) . ');';
-        
         if (!empty($this->events)) {
             foreach ($this->events as $key => $value) {
                 $js .= "$this->containerId.on('$key', $value);";
             }
         }
-        
-        //Whether to turn on automatic upload
+        //是否开启自动上传
         if ($this->options['autoProcessQueue']===false&&empty($this->upload_button)){
             $this->upload_button='<button type="submit" class="btn btn-primary pull-right" id="upload_button" style="position:absolute;right:0.5rem;top: 0.5rem;">Upload</button>';
             $js.=$this->containerId.'.element.querySelector("button[id=upload_button]").addEventListener("click",function (e) {
+console.log("here uploading..."+ e);
                 e.preventDefault();
                 e.stopPropagation();
                 '.$this->containerId.'.processQueue();
             });';
         }
-        
         $this->getView()->registerJs($js);
-        
         DropzoneAsset::register($this->getView());
+        Vue2DropzoneAsset::register($this->getView());
         SortableJsAsset::register($this->getView());
     }
+    
 }

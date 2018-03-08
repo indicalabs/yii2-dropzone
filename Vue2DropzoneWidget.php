@@ -2,6 +2,7 @@
 
 namespace indicalabs\dropzone;
 
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
@@ -9,106 +10,60 @@ use yii\helpers\Url;
 use yii\widgets\InputWidget;
 use yii\web\View;
 
-class Vue2DropzoneWidget extends \yii\base\Widget //InputWidget
+class Vue2DropzoneWidget extends InputWidget
 {
-    /**
-     * @var array The HTML tag attributes for the widget container tag.
-     *
-     * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
-     */
-    public $options = [];
-    /**
-     * @var array The options for the Vue.js.
-     *
-     * @see https://vuejs.org/v2/api/#Options-Data for informations about the supported options.
-     */
     public $clientOptions = [];
-    /**
-     * Initializes the Vue.js.
-     *
-     * This method will initializes the HTML attributes for container.
-     * After will be registered the Vue asset bundle.
-     * If you override this method, make sure you call the parent implementation first.
-     */
     public function init()
     {
-        parent::init();
-        $this->initOptions();
-        $this->initClientOptions();
-        $this->registerJs();
+         parent::init();
     }
-    /**
-     * Initializes the HTML tag attributes for the widget container tag.
-     */
-    protected function initOptions()
-    {
-        if (!isset($this->options['id'])) {
-            $this->options['id'] = $this->getId();
-        }
-    }
-    /**
-     * Initializes the options for the Vue object
-     */
-    protected function initClientOptions()
-    {
-        if (!isset($this->clientOptions['el'])) {
-            $this->clientOptions['el'] = "#{$this->getId()}";
-        }
-    }
-    
-    
-    /**
-     * Registers a specific asset bundles.
-     * @throws \yii\base\InvalidArgumentException
-     */
-    protected function registerJs()
-    {
-        Vue2Asset::register($this->getView());
-        $options = Json::htmlEncode($this->clientOptions);
-        
-        Vue2DropzoneAsset::register($this->getView());
-        
-        $js = <<< JS
-import vue2Dropzone from 'vue2-dropzone'
-import 'vue2-dropzone/dist/vue2Dropzone.css'
 
-export default {
-  name: 'app',
-  components: {
-    vueDropzone: vue2Dropzone
-  },
-  data: function () {
-    return {
-      dropzoneOptions: {
-          url: 'https://httpbin.org/post',
-          thumbnailWidth: 150,
-          maxFilesize: 0.5,
-          headers: { "My-Awesome-Header": "header value" }
-      }
-    }
-  }
-}
-JS;
-        $js = "var app = new Vue({$options})";
-        $this->getView()->registerJs($js, View::POS_END);
-    }
-    /**
-     * @inheritdoc
-     */
-    public static function begin($config = [])
+    public function run()
     {
-        $object = parent::begin($config);
-        echo Html::beginTag('div', $object->options);
-        return $object;
+        $this->registerAssets();
+        return Html::tag('div','', []);
     }
-    /**
-     * @inheritdoc
-     */
-    public static function end()
+
+    protected function registerAssets()
     {
-        echo Html::endTag('div');
-        return parent::end();
-    }
     
+$js = <<< JS
+new Vue({
+  el: '#dropzone',
+    components: {
+      vue2dropzone: vue2Dropzone
+    },
+    data : function () {
+          return {
+            id: 'dropzone',
+            // Other options here...
+            
+                dropzoneOptions: {
+                  url: 'upload',
+                  method: 'post',
+                  acceptedFiles: 'image/*',
+                  uploadMultiple: true,
+                  autoProcessQueue: false, // Dropzone should wait for the user to click a button to upload
+                  parallelUploads: 15, // Dropzone should upload all files at once (including the form data) not all files individually
+                  maxFiles: 15, // this means that they shouldn't be split up in chunks
+                  addRemoveLinks: true,
+                  thumbnailWidth: 150,
+                  maxFilesize: 5,
+                  dictDefaultMessage: "<i class='fa fa-cloud-upload'></i> Drop files here to upload (max. 15 files)",
+                  
+                }
+          }
+    }
+})
+
+JS;
+        
+        $this->getView()->registerJs($js);
+       DropzoneAsset::register($this->getView());
+       Vue2Asset::register($this->getView());
+       AxiosAsset::register($this->getView());
+       Vue2DropzoneAsset::register($this->getView());
+       //SortableJsAsset::register($this->getView());
+    }
     
 }
